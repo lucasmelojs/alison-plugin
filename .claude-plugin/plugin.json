@@ -1,0 +1,10 @@
+{
+  "name": "apresentacao-plugin",
+  "displayName": "Claude + GitHub + Supabase + Vercel",
+  "version": "0.1.0",
+  "description": "Conecta o Claude Code ao GitHub, ao Supabase e à Vercel por login no navegador (OAuth), guiado passo a passo pela skill /apresentacao-plugin:comecar. Feito para quem não programa: nenhuma chave para copiar, nenhuma ferramenta para instalar.",
+  "author": { "name": "Lucas Melo", "email": "lucasstlflix@gmail.com" },
+  "repository": "https://github.com/lucasmelojs/apresentacao-plugin",
+  "license": "UNLICENSED",
+  "keywords": ["onboarding", "github", "supabase", "vercel", "mcp", "oauth", "nao-tecnico"]
+}
