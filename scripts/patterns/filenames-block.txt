@@ -1,0 +1,9 @@
+(^|/)\.env($|\.)
+(^|/)[^/]*\.(pem|key|p12|pfx|jks|keystore|ppk)$
+(^|/)id_(rsa|ed25519|ecdsa|dsa)$
+(^|/)credentials\.json$
+(^|/)service[-_]?account[^/]*\.json$
+(^|/)\.netrc$
+(^|/)\.htpasswd$
+(^|/)secrets?\.(json|ya?ml|toml)$
+(^|/)\.aws/credentials$

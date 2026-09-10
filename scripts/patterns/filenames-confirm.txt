@@ -1,0 +1,4 @@
+\.(xlsx|xlsm|xls|csv|tsv|numbers|ods)$
+\.(sqlite|sqlite3|db|dump|bak|sql\.gz)$
+(^|/)\.npmrc$
+(^|/)\.pypirc$

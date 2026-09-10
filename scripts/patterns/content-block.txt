@@ -1,0 +1,15 @@
+-----BEGIN [A-Z ]*PRIVATE KEY-----
+AKIA[0-9A-Z]{16}
+gh[pousr]_[A-Za-z0-9]{36}
+github_pat_[A-Za-z0-9_]{22,}
+sk_live_[0-9A-Za-z]{10,}
+rk_live_[0-9A-Za-z]{10,}
+sk-ant-[A-Za-z0-9_-]{20,}
+sk-proj-[A-Za-z0-9_-]{20,}
+xox[baprs]-[0-9A-Za-z-]{10,}
+AIza[0-9A-Za-z_-]{35}
+sb_secret_[A-Za-z0-9_-]{10,}
+SUPABASE_SERVICE_ROLE_KEY[[:space:]]*[:=][[:space:]]*(\\)?["']?[A-Za-z0-9._-]{20,}
+(postgres|postgresql|mysql|mongodb(\+srv)?|redis|amqps?)://[^:/[:space:]"']+:[^@[:space:]"']+@
+(api[_-]?key|secret[_-]?key|client[_-]?secret|access[_-]?token|auth[_-]?token|password|passwd|senha)[[:space:]]*[:=][[:space:]]*(\\)?["'][A-Za-z0-9/+_=-]{16,}(\\)?["']
+(^|\\n)(export[[:space:]]+)?[A-Z0-9_]*(API_KEY|SECRET|TOKEN|PASSWORD|PASSWD|SENHA)[A-Z0-9_]*=[A-Za-z0-9/+_=-]{16,}($|\\n|[[:space:]])
