@@ -2,9 +2,19 @@
   "name": "alison-plugin",
   "displayName": "Claude + GitHub + Supabase + Vercel",
   "version": "0.2.0",
-  "description": "Para o app do Claude Code: conecta ao GitHub, ao Supabase e à Vercel por login no navegador (OAuth), guiado passo a passo pela skill /alison-plugin:comecar. Feito para quem não programa: nenhuma chave para copiar, nenhuma ferramenta para instalar.",
-  "author": { "name": "Lucas Melo", "email": "lucasstlflix@gmail.com" },
+  "description": "Para o app do Claude Code: conduz quem não programa a ligar as integrações nativas — Conectores do claude.ai para Supabase e Vercel, Claude GitHub App e GitHub Desktop para o GitHub — e protege para nada sensível ou desnecessário subir ao GitHub. Nenhuma chave para copiar.",
+  "author": {
+    "name": "Lucas Melo",
+    "email": "lucasstlflix@gmail.com"
+  },
   "repository": "https://github.com/lucasmelojs/alison-plugin",
   "license": "UNLICENSED",
-  "keywords": ["onboarding", "github", "supabase", "vercel", "mcp", "oauth", "nao-tecnico"]
+  "keywords": [
+    "onboarding",
+    "connectors",
+    "github",
+    "supabase",
+    "vercel",
+    "nao-tecnico"
+  ]
 }

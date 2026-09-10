@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection by using it (one read-only call) instead of asking. Built for the Claude Code desktop app only: no terminal, no claude CLI. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that leads a non-programmer through the NATIVE integrations of the Claude Code desktop app — claude.ai Connectors for Supabase and Vercel, the Claude GitHub App (claude.ai/code) and GitHub Desktop for GitHub — and verifies each one by using it instead of asking. No plugin-shipped servers, no keys, no terminal. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -18,13 +18,16 @@ default behaviour while this skill runs:
 - **One service per message.** Finish GitHub before mentioning Supabase.
 - **Never ask for, accept or store a password or key.** The connection is a browser
   login. If the user pastes a key, tell them kindly not to, and do not repeat it.
-- **Never run `/mcp` yourself** — you cannot; the user types it. Give the exact
-  keystrokes, as typed in the app's message box.
+- **Never click for them.** The **+** button, **Connectors**, claude.ai pages: the
+  person does it; you give exact labels, one step per line.
 - **Verify by using.** A connection is proven when one of its tools answers a
   read-only call. There is no CLI in this surface; do not look for one.
 
-Names as they appear in this session: `plugin:alison-plugin:github`,
-`plugin:alison-plugin:supabase`, `plugin:alison-plugin:vercel`.
+This plugin ships **no servers**. Everything comes from the app's own integrations:
+Supabase and Vercel are claude.ai **Connectors** (they show up as `claude.ai Supabase`
+and `claude.ai Vercel`); GitHub is the **Claude GitHub App** (claude.ai/code) plus, for
+folders on this computer, **GitHub Desktop**. GitHub has no connector and its remote
+server needs a pasted token, which this audience must never do (AD-007).
 
 ## 0. Ground truth, silently
 
@@ -36,31 +39,29 @@ The person is in the **Claude Code desktop app** (Mac or Windows). The source of
 truth is whether each service's tools **answer**. Probe each one with a read-only
 call:
 
-| service | probe (use whichever of these tools exists in the session) | result |
+| service | how it is proven | result |
 |---|---|---|
-| GitHub | `get_me` / the tool that returns the authenticated user | `connected` |
-| Supabase | `list_organizations` / `list_projects` | `connected` |
-| Vercel | `list_teams` / `list_projects` | `connected` |
+| Supabase | a `claude.ai Supabase` tool answers `list_organizations` / `list_projects` | `connected` |
+| Vercel | a `claude.ai Vercel` tool answers `list_teams` / `list_projects` | `connected` |
+| GitHub | no tool to call. `connected` = the person confirmed their repositories are listed on claude.ai/code (ASK #1b) **or** `gh auth status` succeeds in Bash when `gh` exists | `connected` |
 
-- Tool **not present** in the session, or the call fails with anything about
-  authentication / 401 / unauthorized → `needs_auth`.
-- Tools present under a **claude.ai connector** name (e.g. "claude.ai Supabase")
-  also count as `connected` — the person already logged in through claude.ai;
-  do not make them log in twice.
+- Connector tool **not present**, or the call fails with anything about
+  authentication / 401 / unauthorized / "session token rejected" → `needs_auth`.
 - Any other error → `failed`; keep the message for ASK #2.
+- The plugin has no servers of its own; do not look for any.
 
 Also read `~/.claude/alison/config.json` (`%USERPROFILE%\.claude\alison\config.json`
 on Windows) if it exists, and note whether `~/.claude/CLAUDE.md` exists.
 
 - All three `connected` → jump to **step 5**. Nothing to ask.
-- The plugin's own servers absent from `/mcp` entirely (no `plugin:alison-plugin:*`
-  and no probe tool at all) → ask the person to type `/reload-plugins`, then close
-  and reopen this session. Stop.
+- `/mcp` empty of any `claude.ai …` entry although the person says they connected →
+  the session predates the connection; ask them to open a **new conversation** and
+  type `/alison-plugin:comecar` again. Stop.
 
 ## 1. Welcome (first run only — no `config.json`)
 
-One message, five lines max: we will connect three services by logging in on the
-browser, about five minutes, nothing to install, nothing to copy; a small
+One message, five lines max: we will switch on three connections that already live in the
+app, by logging in on the browser, about five minutes, nothing to copy; a small
 permission box may appear when Claude checks a connection — answering **Yes** is
 expected. Then:
 
@@ -79,43 +80,74 @@ for "pronto" before continuing:
 
 If the user already has all three, skip the table entirely.
 
-## 2. Connect, in order: GitHub → Supabase → Vercel
+## 2. Connect, in order: Supabase → Vercel → GitHub
 
-Skip any service already `connected`. For the current one, send **exactly** this
-(adapt the name and the provider line):
+Skip any service already `connected`. Connectors first: they are the two clicks
+the person can see working immediately. GitHub last, because it has two halves.
 
-> Vamos conectar o **GitHub**.
-> 1. Digite `/mcp` e aperte Enter.
-> 2. Na lista, use as setas até `plugin:alison-plugin:github` e aperte Enter.
-> 3. Escolha **Authenticate**. O navegador vai abrir.
-> 4. Entre na sua conta e clique em **Authorize**.
-> 5. Volte para esta janela e me diga "pronto".
+### Supabase and Vercel — Connectors (same steps, swap the name)
 
-Provider line for step 4:
+> Vamos conectar o **Supabase**.
+> 1. Clique no botão **+** ao lado da caixa de mensagem e escolha **Connectors**.
+> 2. Procure **Supabase** e clique em **Connect**. Se não aparecer na lista, clique
+>    em **Manage connectors** — abre o claude.ai; lá vá em Configurações →
+>    Conectores → **Browse connectors** → Supabase → **Connect**.
+> 3. O navegador abre. Entre na sua conta e clique em **Authorize**.
+> 4. Volte para esta janela e me diga "pronto".
+
+Provider line for step 3:
 - Supabase: "Ele pergunta qual organização autorizar — escolha a sua (normalmente só existe uma)."
 - Vercel: "Se ele perguntar qual time (scope), escolha o seu nome."
 
-When the user comes back, **do not ask anything** — probe the service again
-(step 0 table). If the tool still is not listed right after the login, the
-session may not have refreshed its tool list: say "vou atualizar a lista" and try
-once more; if still absent, ask for `/reload-plugins` once before ASK #2.
+When the user comes back, **do not ask anything** — probe (step 0 table). If the
+connector is not in the session yet, say "vou atualizar a lista" and look once
+more; if still absent, ask for a **new conversation** (connectors load when a
+session starts) before ASK #2.
 
-- Probe answers → one line: "GitHub conectado ✓". Move to the next service.
+- Probe answers → one line: "Supabase conectado ✓". Next service.
 - Still `needs_auth` or `failed` → **ASK #2**, header with the service name:
-  > "A conexão com o GitHub ainda não apareceu. O que aconteceu?"
+  > "A conexão com o Supabase ainda não apareceu. O que aconteceu?"
   > `O navegador não abriu` · `Deu erro na tela de autorização` ·
   > `Fechei antes de autorizar — quero tentar de novo` · `Pular por agora`
 
-  - navegador não abriu → in `/mcp` → Authenticate, a link is printed; copy it
-    into any browser. Probe again afterwards.
-  - erro na tela → ask them to paste what the screen said (that is the only free
-    text you need); the common causes are wrong account and, for GitHub, an
-    organisation that blocks third-party apps — say which one it looks like.
-  - tentar de novo → repeat the five steps once.
+  - navegador não abriu → claude.ai → Configurações → Conectores → o serviço →
+    **Connect**, directly in the browser. Probe again afterwards.
+  - erro na tela → ask them to paste what the screen said (the only free text you
+    need); the usual cause is the wrong account (a different Google/GitHub login).
+  - tentar de novo → repeat the four steps once.
   - pular → record `pending` and continue; the SessionStart hook will nudge later.
 
 Never loop more than twice on the same service; after that, record `pending`,
 say so plainly, and continue.
+
+### GitHub — the Claude GitHub App, then GitHub Desktop
+
+There is no GitHub connector, and the GitHub server needs a pasted token — never.
+The native path has two halves; say in one line that the first lets Claude work on
+their repositories in the cloud, the second lets Claude send files from this
+computer.
+
+> Vamos conectar o **GitHub**.
+> 1. Abra https://claude.ai/code no navegador (mesma conta que você usa neste app).
+> 2. Clique em **Connect GitHub** e autorize o **Claude** (escolha sua conta; pode
+>    marcar todos os repositórios).
+> 3. Quando a lista de repositórios aparecer, volte aqui e me diga "pronto".
+
+**ASK #1b** — the only connection you cannot probe, header `GitHub`:
+> "Na página do claude.ai/code, seus repositórios apareceram na lista?"
+> `Sim, apareceram` · `Só aparece o botão de entrar` · `Deu erro`
+
+- Sim → `connected`. Then the second half, no question: if `gh` exists in Bash and
+  `gh auth status` fails, run `gh auth login --web --git-protocol https` and tell
+  them a browser window will ask them to confirm a code. If `gh` does not exist,
+  tell them once: "Para o Claude enviar arquivos desta máquina para o GitHub,
+  instale o **GitHub Desktop** (https://desktop.github.com) e entre na sua conta lá
+  — ele configura o acesso; nada para copiar." Record `"github_desktop": "pending"`
+  in config.json; do not wait for it.
+- Só o botão → they are not signed in to GitHub in that browser; sign in there and
+  repeat step 2. One retry, then `pending`.
+- Deu erro → paste what it said; organisations that block third-party apps are
+  the usual cause.
 
 ## 3. House rules and protections
 
@@ -159,7 +191,8 @@ with the **Write** tool — no script, no python — from the probe results:
 ```json
 {
   "connections": { "github": "connected", "supabase": "needs_auth", "vercel": "connected" },
-  "setup_version": 2,
+  "github_desktop": "pending",
+  "setup_version": 3,
   "updated_at": "YYYY-MM-DD"
 }
 ```
@@ -173,8 +206,9 @@ file for `"<service>": "connected"`, nothing else.
 For each `connected` service, make **one read-only call** with its tools and show
 the answer in one line each — this is the moment the person sees it is real:
 
-- GitHub: the tool that lists the authenticated user's repositories → "Vi N
-  repositórios, o mais recente é X".
+- GitHub: `gh api user --jq .login` and `gh repo list --limit 3` when `gh` is
+  authenticated → "Sua conta X tem estes repositórios: …"; otherwise say the
+  repositories are the ones they saw on claude.ai/code and move on.
 - Supabase: the tool that lists projects (or organizations) → "Sua organização Y
   tem N projetos".
 - Vercel: the tool that lists projects → "Você tem N projetos na Vercel".
