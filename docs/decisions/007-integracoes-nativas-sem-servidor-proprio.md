@@ -17,8 +17,9 @@ a integração nativa dos apps".
 ## Decisão
 O plugin **deixa de trazer `.mcp.json`**. A skill `comecar` conduz ao que o app
 já tem:
-- **Supabase e Vercel**: Conectores do claude.ai (**+** → **Connectors** →
-  **Connect**, ou claude.ai → Configurações → Conectores). Ambos estão no
+- **Supabase e Vercel**: Conectores do claude.ai, ligados **de dentro da sessão**
+  pela tool `authenticate` do próprio conector (AD-008); o cartão **+** →
+  **Connectors** só entra quando o conector nem existe na conta. Ambos estão no
   diretório oficial (verificado em claude.com/connectors, 2026-09-10) e aparecem
   no Claude Code como `claude.ai Supabase` / `claude.ai Vercel`.
 - **GitHub**: não está no diretório de conectores. O caminho nativo tem duas

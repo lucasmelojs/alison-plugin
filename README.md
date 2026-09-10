@@ -31,9 +31,8 @@ Na primeira conversa depois disso, digite:
 ```
 
 A skill conduz o resto: pergunta em quais serviços você já tem conta, liga uma
-integração por vez (botão **+** → **Connectors** para Supabase e Vercel; **Connect
-GitHub** em claude.ai/code para o GitHub — você só faz login no navegador e clica em
-**Authorize**), confere sozinha se deu certo usando a conexão e termina mostrando
+integração por vez sem você sair do app (para Supabase e Vercel ele mesmo abre o
+pedido de login e te dá o link; para o GitHub, **Connect GitHub** em claude.ai/code), confere sozinha se deu certo usando a conexão e termina mostrando
 algo real de cada conta. Leva
 uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
 `/alison-plugin:comecar` retoma só o que faltou.
@@ -58,7 +57,7 @@ Para voltar à versão da `main`: repita o passo 1 e instale com
 
 | componente | arquivo | para quê |
 |---|---|---|
-| Conectores Supabase e Vercel | (do próprio app, nada no plugin) | ligados em **+ → Connectors**; aparecem como `claude.ai Supabase` / `claude.ai Vercel` |
+| Conectores Supabase e Vercel | (do próprio app, nada no plugin) | o Claude inicia o login na própria conversa e te dá o link; aparecem como `claude.ai Supabase` / `claude.ai Vercel` |
 | GitHub | (do próprio app, nada no plugin) | Claude GitHub App em claude.ai/code para o que roda na nuvem; GitHub Desktop para enviar arquivos deste computador |
 | skill `comecar` | `skills/comecar/` | o onboarding guiado — a única skill do plugin |
 | `check-connections.sh` | `scripts/` | **não usado no app**: ferramenta de terminal mantida para quem mantém o plugin (lê `claude mcp list`); a skill confere as conexões **usando-as**, com uma consulta só de leitura |
