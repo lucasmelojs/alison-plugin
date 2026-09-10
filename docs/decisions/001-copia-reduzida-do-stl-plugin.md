@@ -20,6 +20,10 @@ Saem: todas as skills de dev, `stl-project-init`, os templates de `.gitignore`,
 `CLAUDE.project.md` e `handoff.md`, e o `firecrawl` (uma chave para copiar é
 exatamente a fricção que o público não pode ter; `userConfig` sai junto).
 
+> **Atualização (AD-010):** o Firecrawl voltou. Ele ganhou login por navegador e
+> está no diretório de conectores do claude.ai, então a razão da remoção — a API
+> key — não existe mais.
+
 ## Consequências
 - Zero toolchain: só MCPs HTTP, então não há `node`, `npx`, `gh` nem `supabase`
   a instalar — o pré-requisito é o Claude Code e um navegador.
