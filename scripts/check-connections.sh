@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# alison-plugin — reports the auth state of the three bundled MCP servers.
+# alison-plugin — reports the auth state of the four connections, by name.
 # TERMINAL-ONLY maintainer tool. Not referenced by the skill on the desktop-only
 # branch (AD-006): the app has no `claude` on PATH, so the skill probes tools.
 # Output, one per line, stable for the skill to parse:
 #   github=connected | needs_auth | failed | missing
 # Reads `claude mcp list` (health-checked, uses the credentials stored by /mcp).
-# Exit 0 when all three are connected, 1 otherwise. Never blocks longer than the
+# Exit 0 when all are connected, 1 otherwise. Never blocks longer than the
 # `claude mcp list` health check itself.
 set -uo pipefail
 
 PLUGIN_NAME="${PLUGIN_NAME:-alison-plugin}"
 # SERVERS is overridable only so the parser can be tested against another
 # installed plugin (e.g. PLUGIN_NAME=stripe SERVERS="stripe").
-read -r -a SERVERS <<< "${SERVERS:-github supabase vercel}"
+read -r -a SERVERS <<< "${SERVERS:-github supabase vercel firecrawl}"
 
 if ! command -v claude >/dev/null 2>&1; then
   for s in "${SERVERS[@]}"; do echo "$s=missing"; done

@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that leads a non-programmer through the NATIVE integrations of the Claude Code desktop app — claude.ai Connectors for Supabase and Vercel, and the machine's own GitHub credential (GitHub Desktop) for GitHub — starting each connector login from inside the session with its own authenticate tool, and verifying by use instead of asking. No plugin-shipped servers, no keys, no terminal. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that leads a non-programmer through the NATIVE integrations of the Claude Code desktop app — claude.ai Connectors for Supabase, Vercel and Firecrawl, and the machine's own GitHub credential (GitHub Desktop) for GitHub — starting each connector login from inside the session with its own authenticate tool, and verifying by use instead of asking. No plugin-shipped servers, no keys, no terminal. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel / Firecrawl", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -27,8 +27,8 @@ default behaviour while this skill runs:
   read-only call. There is no CLI in this surface; do not look for one.
 
 This plugin ships **no servers**. Everything comes from the app's own integrations:
-Supabase and Vercel are claude.ai **Connectors** (they show up as `claude.ai Supabase`
-and `claude.ai Vercel`); GitHub is the **credential on this machine**, put there by
+Supabase, Vercel and Firecrawl are claude.ai **Connectors** (`claude.ai Supabase`,
+`claude.ai Vercel`, `claude.ai Firecrawl`); GitHub is the **credential on this machine**, put there by
 **GitHub Desktop** or by `gh`. GitHub has no connector and its remote server needs a
 pasted token, which this audience must never do (AD-007). The Claude GitHub App on
 claude.ai/code is an optional extra, never a step (AD-009).
@@ -44,7 +44,7 @@ truth is whether each service's tools **answer**. Probe each one with a read-onl
 call:
 
 Every claude.ai connector appears in this session as tools named
-`mcp__claude_ai_<Nome>__<tool>` (`Supabase`, `Vercel`). What you can see tells you
+`mcp__claude_ai_<Nome>__<tool>` (`Supabase`, `Vercel`, `Firecrawl`). What you can see tells you
 the state, with no question and no command:
 
 | what the session offers | state | what step 2 does |
@@ -54,7 +54,9 @@ the state, with no question and no command:
 | no `mcp__claude_ai_Supabase__*` at all | `missing` | **2B** — the person adds the connector |
 
 Confirm a `connected` guess with one read-only call (`list_organizations` for
-Supabase, `list_teams` or `list_projects` for Vercel). A failure mentioning
+Supabase, `list_teams` or `list_projects` for Vercel). For **Firecrawl** the listed
+tools are proof enough — never spend a search just to check, its free tier is
+counted. A failure mentioning
 authentication, 401, unauthorized or "session token rejected" means `needs_auth`,
 even when the real tools are listed. Any other error → `failed`, keep the message.
 
@@ -72,21 +74,22 @@ the second command returns; `grep -q` is silent on purpose.
 Also read `~/.claude/alison/config.json` (`%USERPROFILE%\.claude\alison\config.json`
 on Windows) if it exists, and note whether `~/.claude/CLAUDE.md` exists.
 
-- All three `connected` → jump to **step 5**. Nothing to ask.
+- All four `connected` → jump to **step 5**. Nothing to ask.
 - The person says a service is already connected but its tools are `missing` → the
   session started before the connection; ask them to open a **new conversation**
   and type `/alison-plugin:comecar` again. Stop.
 
 ## 1. Welcome (first run only — no `config.json`)
 
-One message, five lines max: we will switch on three connections that already live in the
+One message, five lines max: we will switch on four connections that already live in the
 app, by logging in on the browser, about five minutes, nothing to copy; a small
 permission box may appear when Claude checks a connection — answering **Yes** is
 expected. Then:
 
 **ASK #1** — AskUserQuestion, `multiSelect: true`, header `Contas`:
 > "Em quais destes você já tem conta?" options: `GitHub` · `Supabase` · `Vercel`
-> · `Nenhuma ainda`.
+> · `Firecrawl` · `Nenhuma ainda`. Firecrawl entra com login do GitHub e o plano
+> grátis já serve — diga isso se perguntarem.
 
 For every service without an account, give the sign-up link and one tip, then wait
 for "pronto" before continuing:
@@ -96,15 +99,18 @@ for "pronto" before continuing:
 | GitHub | https://github.com/signup | create this one first |
 | Supabase | https://supabase.com/dashboard/sign-up | click **Continue with GitHub** — no new password |
 | Vercel | https://vercel.com/signup | click **Continue with GitHub** — no new password |
+| Firecrawl | https://www.firecrawl.dev/signin/signup | **Continue with GitHub**; the free plan is enough |
 
-If the user already has all three, skip the table entirely.
+If the user already has all four, skip the table entirely.
 
-## 2. Connect, in order: Supabase → Vercel → GitHub
+## 2. Connect, in order: Supabase → Vercel → Firecrawl → GitHub
 
 Skip any service already `connected`. Connectors first: they are the two clicks
 the person can see working immediately. GitHub last, because it has two halves.
 
 ### 2A. Connector installed, needs login — you start it (the normal case)
+
+Applies to Supabase, Vercel and Firecrawl, one at a time, in that order.
 
 Call the connector's own tool, e.g. `mcp__claude_ai_Supabase__authenticate`. It
 returns an authorization URL. Then, in one message:
@@ -116,7 +122,8 @@ returns an authorization URL. Then, in one message:
 > diga "pronto".
 
 Vercel: swap the organisation line for "Se ele perguntar qual time (scope),
-escolha o seu nome."
+escolha o seu nome." Firecrawl: "Se você ainda não tem conta, dá para entrar com o
+GitHub ali mesmo, e o plano grátis já serve."
 
 When they say "pronto", **do not ask anything** — probe. The real tools appear on
 their own once the browser flow finishes.
@@ -196,7 +203,7 @@ repositórios, não há nada a fazer."
 ### 3a. Global CLAUDE.md
 
 Template: `${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.global.md`. It only tells Claude
-to speak plainly, confirm before changing anything on the three services, and never
+to speak plainly, confirm before changing anything on those services, and never
 handle keys — safe for anyone.
 
 - `~/.claude/CLAUDE.md` **does not exist** → copy the template. No question.
@@ -232,7 +239,7 @@ with the **Write** tool — no script, no python — from the probe results:
 
 ```json
 {
-  "connections": { "github": "connected", "supabase": "needs_auth", "vercel": "connected" },
+  "connections": { "github": "connected", "supabase": "needs_auth", "vercel": "connected", "firecrawl": "connected" },
   "github_desktop": "pending",
   "setup_version": 3,
   "updated_at": "YYYY-MM-DD"
@@ -248,6 +255,8 @@ file for `"<service>": "connected"`, nothing else.
 For each `connected` service, make **one read-only call** with its tools and show
 the answer in one line each — this is the moment the person sees it is real:
 
+- Firecrawl: one small `firecrawl_search` on something they care about → "Procurei
+  na web e achei: …". The only step 5 call that spends free-tier credit; do it once.
 - GitHub: `gh repo list --limit 3` when `gh` is authenticated → "Sua conta X tem
   estes repositórios: …". With only a stored credential there is nothing free to
   list; say the machine is ready to send files to GitHub and move on.
@@ -263,11 +272,12 @@ one plain line and move on — the connection status from step 2 still stands.
 Close with at most nine lines: what is connected, what is pending (and that
 `/alison-plugin:comecar` finishes it later), what happened to the rules
 file, one line on the protections ("nada de chave ou senha sobe para o GitHub sem
-você ver — e se for planilha ou lista de pessoas, ele pergunta antes"), and three
+você ver — e se for planilha ou lista de pessoas, ele pergunta antes"), and four
 things to try now, one per service, e.g.:
 
 > - "Quais foram as últimas mudanças no meu repositório X?"
 > - "Que tabelas existem no meu projeto Supabase?"
 > - "Meu último deploy na Vercel deu certo?"
+> - "Pesquise na web como os concorrentes cobram por isso e resuma"
 
 No **ASK** here. Ending the turn is the invitation.
