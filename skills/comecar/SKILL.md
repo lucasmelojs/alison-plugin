@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection with a script instead of asking. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection by using it (one read-only call) instead of asking — works in the desktop app, where the claude CLI is not on PATH. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -13,35 +13,65 @@ default behaviour while this skill runs:
 - **Portuguese, plain words.** Never say MCP, OAuth, token, CLI, terminal, JSON or
   hook unprompted. Say "conexão", "login no navegador", "esta janela".
 - **Questions happen at exactly four moments** (marked `ASK` below). Everything else
-  you check yourself with the scripts and simply report. Never ask "deu certo?" —
-  run the check.
+  you check yourself (probe a tool, run a script) and simply report. Never ask
+  "deu certo?" — probe.
 - **One service per message.** Finish GitHub before mentioning Supabase.
 - **Never ask for, accept or store a password or key.** The connection is a browser
   login. If the user pastes a key, tell them kindly not to, and do not repeat it.
 - **Never run `/mcp` yourself** — you cannot; the user types it. Give the exact
-  keystrokes.
+  keystrokes. They work the same in the terminal and in the desktop app.
+- **Verify by using, not by CLI.** A connection is proven when one of its tools
+  answers a read-only call. `claude mcp list` is a bonus when available.
 
 Names as they appear in this session: `plugin:alison-plugin:github`,
 `plugin:alison-plugin:supabase`, `plugin:alison-plugin:vercel`.
 
 ## 0. Ground truth, silently
 
+Order on a **first run** (no `config.json`): send the welcome of step 1 *before*
+the first probe — a probe can pop the permission box, and the person must have
+read that answering **Yes** is expected. On later runs, probe straight away.
+
+The person may be in the **desktop app** (Mac or Windows), where the `claude`
+command is often not on the shell's PATH. So the source of truth is not a CLI: it
+is whether each service's tools **answer**. Probe each one with a read-only call:
+
+| service | probe (use whichever of these tools exists in the session) | result |
+|---|---|---|
+| GitHub | `get_me` / the tool that returns the authenticated user | `connected` |
+| Supabase | `list_organizations` / `list_projects` | `connected` |
+| Vercel | `list_teams` / `list_projects` | `connected` |
+
+- Tool **not present** in the session, or the call fails with anything about
+  authentication / 401 / unauthorized → `needs_auth`.
+- Tools present under a **claude.ai connector** name (e.g. "claude.ai Supabase")
+  also count as `connected` — the person already logged in through claude.ai;
+  do not make them log in twice.
+- Any other error → `failed`; keep the message for ASK #2.
+
+Optional accelerator, only when it works:
+
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh"      # github=… supabase=… vercel=…
-cat ~/.claude/alison/config.json 2>/dev/null          # previous run, if any
-[ -f ~/.claude/CLAUDE.md ] && echo "global CLAUDE.md exists"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh"   # github=… supabase=… vercel=…
 ```
 
+If it prints `error=claude CLI not on PATH` or every line says `missing`, ignore it
+silently and trust the probes — never tell the person to "restart" because of it.
+
+Also read `~/.claude/alison/config.json` (`%USERPROFILE%\.claude\alison\config.json`
+on Windows) if it exists, and note whether `~/.claude/CLAUDE.md` exists.
+
 - All three `connected` → jump to **step 5**. Nothing to ask.
-- `error=claude CLI not on PATH` → tell the user to close and reopen Claude Code,
-  then run `/alison-plugin:comecar` again. Stop.
-- Anything `missing` → the plugin is not fully loaded; ask the user to restart
-  Claude Code (`/exit`, then `claude`). Stop.
+- The plugin's own servers absent from `/mcp` entirely (no `plugin:alison-plugin:*`
+  and no probe tool at all) → ask the person to type `/reload-plugins`, then close
+  and reopen this session. Stop.
 
 ## 1. Welcome (first run only — no `config.json`)
 
-One message, four lines max: we will connect three services by logging in on the
-browser, about five minutes, nothing to install, nothing to copy. Then:
+One message, five lines max: we will connect three services by logging in on the
+browser, about five minutes, nothing to install, nothing to copy; a small
+permission box may appear when Claude checks a connection — answering **Yes** is
+expected. Then:
 
 **ASK #1** — AskUserQuestion, `multiSelect: true`, header `Contas`:
 > "Em quais destes você já tem conta?" options: `GitHub` · `Supabase` · `Vercel`
@@ -74,20 +104,19 @@ Provider line for step 4:
 - Supabase: "Ele pergunta qual organização autorizar — escolha a sua (normalmente só existe uma)."
 - Vercel: "Se ele perguntar qual time (scope), escolha o seu nome."
 
-When the user comes back, **do not ask anything** — run the check:
+When the user comes back, **do not ask anything** — probe the service again
+(step 0 table). If the tool still is not listed right after the login, the
+session may not have refreshed its tool list: say "vou atualizar a lista" and try
+once more; if still absent, ask for `/reload-plugins` once before ASK #2.
 
-```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh"
-```
-
-- `connected` → one line: "GitHub conectado ✓". Move to the next service.
+- Probe answers → one line: "GitHub conectado ✓". Move to the next service.
 - Still `needs_auth` or `failed` → **ASK #2**, header with the service name:
   > "A conexão com o GitHub ainda não apareceu. O que aconteceu?"
   > `O navegador não abriu` · `Deu erro na tela de autorização` ·
   > `Fechei antes de autorizar — quero tentar de novo` · `Pular por agora`
 
   - navegador não abriu → in `/mcp` → Authenticate, a link is printed; copy it
-    into any browser. Re-check afterwards.
+    into any browser. Probe again afterwards.
   - erro na tela → ask them to paste what the screen said (that is the only free
     text you need); the common causes are wrong account and, for GitHub, an
     organisation that blocks third-party apps — say which one it looks like.
@@ -118,32 +147,35 @@ handle keys — safe for anyone.
 ### 3b. Machine-wide git ignore list (no question)
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/install-git-protections.sh"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/install-git-protections.sh"
 ```
 
 Prints `gitignore_global=created|merged|skipped …`. Say it in one line, in the
 person's words: "Arquivos de chave e senha (.env e parecidos) e arquivos gerados
 automaticamente (node_modules, builds, caches, logs) agora são ignorados pelo Git em
 qualquer pasta deste computador — só o que você escreveu sobe." When `skipped`, say the protection
-enters automatically once Git is installed, and move on. The second protection
+enters automatically once Git is installed, and move on. On **Windows** that means
+Git for Windows (https://git-scm.com/download/win) — the Claude Code app itself
+needs it for anything in this skill that runs a command; say it once, plainly. The second protection
 needs nothing installed: the plugin already checks everything that goes to GitHub
 (`github-guard`) and stops or asks before anything sensitive leaves.
 
 ## 4. Record (so the hook stops nudging)
 
-```bash
-mkdir -p ~/.claude/alison
-"${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh" | python3 -c '
-import json, pathlib, datetime, sys
-root = pathlib.Path.home() / ".claude/alison/config.json"
-conn = dict(l.strip().split("=", 1) for l in sys.stdin if "=" in l and not l.startswith("error="))
-cfg = json.loads(root.read_text()) if root.exists() else {}
-cfg.update({"connections": conn, "setup_version": 1,
-            "updated_at": datetime.date.today().isoformat()})
-root.write_text(json.dumps(cfg, indent=2) + "\n")
-print(cfg)
-'
+Write `~/.claude/alison/config.json` (Windows: `%USERPROFILE%\.claude\alison\config.json`)
+with the **Write** tool — no script, no python — from the probe results:
+
+```json
+{
+  "connections": { "github": "connected", "supabase": "needs_auth", "vercel": "connected" },
+  "setup_version": 2,
+  "updated_at": "YYYY-MM-DD"
+}
 ```
+
+Values are exactly `connected`, `needs_auth`, `failed` or `pending`. Create the
+folder if needed (`mkdir -p ~/.claude/alison`). The SessionStart hook greps this
+file for `"<service>": "connected"`, nothing else.
 
 ## 5. Prove it works, then stop
 

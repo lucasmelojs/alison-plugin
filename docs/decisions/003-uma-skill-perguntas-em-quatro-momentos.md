@@ -18,8 +18,9 @@ Uma skill, `comecar`, com as perguntas fixadas no próprio texto:
 4. Não há quarta pergunta no fim: a skill termina com uma leitura real de cada
    conta e três sugestões de uso; encerrar o turno é o convite.
 
-Todo o resto é verificado por script. `check-connections.sh` lê `claude mcp
-list`, cujas linhas de servidor de plugin têm o formato estável
+Todo o resto é verificado sem perguntar. Desde o AD-005 a verificação primária é
+**sondar uma tool** do servidor; `check-connections.sh` ficou como atalho opcional.
+Ele lê `claude mcp list`, cujas linhas de servidor de plugin têm o formato estável
 `plugin:<plugin>:<servidor>: <url> (HTTP) - ✔ Connected | ! Needs authentication`
 (medido em 2026-09-10 com o plugin `stripe` instalado). O hook `SessionStart`
 **não** chama `claude mcp list` — o health check leva segundos e o hook tem 5 s —

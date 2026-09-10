@@ -5,18 +5,25 @@ do **Supabase** (banco de dados) e da **Vercel** (onde o site fica no ar) — po
 login no navegador, sem copiar chave nenhuma e sem instalar mais nada. Feito para
 quem não programa.
 
-## Instalar (3 comandos, uma vez)
+## Instalar (uma vez, dentro do próprio Claude Code)
 
-Antes: ter o [Claude Code](https://docs.anthropic.com/pt/docs/claude-code/overview)
-instalado. No app ou no terminal onde o Claude Code roda:
+Serve para o **app do Claude Code** (Mac ou Windows) e para o terminal. Abra uma
+conversa e digite estas duas linhas, uma de cada vez, na caixa de mensagem:
 
-```bash
-claude plugin marketplace add lucasmelojs/alison-plugin
-claude plugin install alison-plugin@alison
-claude
+```
+/plugin marketplace add lucasmelojs/alison-plugin
+/plugin install alison-plugin@alison
 ```
 
-Na primeira conversa, digite:
+Depois digite `/reload-plugins`. Se as conexões não aparecerem em `/mcp`, feche a
+conversa e abra uma nova — o app carrega as conexões e as proteções do plugin ao
+iniciar a sessão.
+
+> **Windows:** instale antes o [Git para Windows](https://git-scm.com/download/win).
+> O próprio Claude Code precisa dele para executar comandos; sem ele, a guarda e a
+> lista de ignorados deste plugin não funcionam.
+
+Na primeira conversa depois disso, digite:
 
 ```
 /alison-plugin:comecar
@@ -24,9 +31,12 @@ Na primeira conversa, digite:
 
 A skill conduz o resto: pergunta em quais serviços você já tem conta, conecta um
 por vez (você só faz login no navegador e clica em **Authorize**), confere sozinha
-se deu certo e termina mostrando algo real de cada conta. Leva uns cinco minutos.
-Se parar no meio, o Claude lembra na próxima conversa e `/alison-plugin:comecar`
-retoma só o que faltou.
+se deu certo usando a conexão e termina mostrando algo real de cada conta. Leva
+uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
+`/alison-plugin:comecar` retoma só o que faltou.
+
+Quem prefere o terminal: `claude plugin marketplace add lucasmelojs/alison-plugin`
+e `claude plugin install alison-plugin@alison` fazem o mesmo.
 
 ## O que vem dentro
 
@@ -36,7 +46,7 @@ retoma só o que faltou.
 | conexão `supabase` | `.mcp.json` | servidor oficial hospedado do Supabase (`mcp.supabase.com/mcp`), login OAuth |
 | conexão `vercel` | `.mcp.json` | servidor oficial da Vercel (`mcp.vercel.com`), login OAuth |
 | skill `comecar` | `skills/comecar/` | o onboarding guiado — a única skill do plugin |
-| `check-connections.sh` | `scripts/` | lê `claude mcp list` e diz o estado de cada conexão; a skill confere em vez de perguntar |
+| `check-connections.sh` | `scripts/` | atalho opcional: lê `claude mcp list` quando o comando existe; a skill confere as conexões **usando-as** (uma consulta só de leitura), então funciona no app mesmo sem o comando |
 | hook `SessionStart` | `hooks/hooks.json` → `scripts/session-start.sh` | uma linha lembrando o que falta, enquanto faltar |
 | regras globais | `templates/CLAUDE.global.md` | instalado em `~/.claude/CLAUDE.md`: fala simples, confirma antes de mudar algo, nunca lida com chave |
 | guarda `github-guard` | `hooks/hooks.json` → `scripts/github-guard.sh` + `scripts/patterns/` | bloqueia chave/senha e pergunta antes de dado pessoal ir para o GitHub, por `git` ou pela conexão |
@@ -59,6 +69,9 @@ linha). É uma rede para os casos comuns, não um scanner forense: chave inventa
 com formato inédito passa; a camada 3 e a 4 existem para isso.
 
 ## Perguntas comuns
+
+**Já conectei o GitHub / Supabase / Vercel pelos Conectores do claude.ai.** Então
+o Claude já usa essas conexões; a skill reconhece e não pede login de novo.
 
 **Onde ficam minhas senhas?** Em lugar nenhum daqui. O login acontece no site de
 cada serviço, no seu navegador; o Claude Code guarda só uma autorização que você
