@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that leads a non-programmer through the NATIVE integrations of the Claude Code desktop app — claude.ai Connectors for Supabase and Vercel, the Claude GitHub App (claude.ai/code) and GitHub Desktop for GitHub — starting each connector login from inside the session with its own authenticate tool, and verifying by use instead of asking. No plugin-shipped servers, no keys, no terminal. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that leads a non-programmer through the NATIVE integrations of the Claude Code desktop app — claude.ai Connectors for Supabase and Vercel, and the machine's own GitHub credential (GitHub Desktop) for GitHub — starting each connector login from inside the session with its own authenticate tool, and verifying by use instead of asking. No plugin-shipped servers, no keys, no terminal. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -12,7 +12,7 @@ default behaviour while this skill runs:
 
 - **Portuguese, plain words.** Never say MCP, OAuth, token, CLI, terminal, JSON or
   hook unprompted. Say "conexão", "login no navegador", "esta janela".
-- **Questions happen at exactly four moments** (marked `ASK` below). Everything else
+- **Questions happen at exactly three moments** (marked `ASK` below). Everything else
   you check yourself (probe a tool, run a script) and simply report. Never ask
   "deu certo?" — probe.
 - **One service per message.** Finish GitHub before mentioning Supabase.
@@ -28,9 +28,10 @@ default behaviour while this skill runs:
 
 This plugin ships **no servers**. Everything comes from the app's own integrations:
 Supabase and Vercel are claude.ai **Connectors** (they show up as `claude.ai Supabase`
-and `claude.ai Vercel`); GitHub is the **Claude GitHub App** (claude.ai/code) plus, for
-folders on this computer, **GitHub Desktop**. GitHub has no connector and its remote
-server needs a pasted token, which this audience must never do (AD-007).
+and `claude.ai Vercel`); GitHub is the **credential on this machine**, put there by
+**GitHub Desktop** or by `gh`. GitHub has no connector and its remote server needs a
+pasted token, which this audience must never do (AD-007). The Claude GitHub App on
+claude.ai/code is an optional extra, never a step (AD-009).
 
 ## 0. Ground truth, silently
 
@@ -57,9 +58,16 @@ Supabase, `list_teams` or `list_projects` for Vercel). A failure mentioning
 authentication, 401, unauthorized or "session token rejected" means `needs_auth`,
 even when the real tools are listed. Any other error → `failed`, keep the message.
 
-GitHub has no connector and no tool to probe. It counts as `connected` when
-`gh auth status` succeeds in Bash, or when the person confirms their repositories
-are listed on claude.ai/code (ASK #1b).
+GitHub has no connector. What matters for someone working on their own folders is
+the **credential on this machine**, and it is probeable — never ask:
+
+```bash
+command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1 && echo gh_ok
+printf 'protocol=https\nhost=github.com\n\n' | GIT_TERMINAL_PROMPT=0 git credential fill 2>/dev/null | grep -q '^password=' && echo credential_ok
+```
+
+Either line printed → `connected`. Neither → `needs_auth`. Never print or store what
+the second command returns; `grep -q` is silent on purpose.
 
 Also read `~/.claude/alison/config.json` (`%USERPROFILE%\.claude\alison\config.json`
 on Windows) if it exists, and note whether `~/.claude/CLAUDE.md` exists.
@@ -151,34 +159,37 @@ If, and only if, 2B did not work twice: claude.ai → Configurações → Conect
 **Browse connectors** → the service → **Connect**, then a new conversation here.
 Never offer this earlier: the person came to use the app, not the website.
 
-### GitHub — the Claude GitHub App, then GitHub Desktop
+### 2D. GitHub — the credential on this machine
 
-There is no GitHub connector, and the GitHub server needs a pasted token — never.
-The native path has two halves; say in one line that the first lets Claude work on
-their repositories in the cloud, the second lets Claude send files from this
-computer.
+**If the step 0 probe said `connected`, GitHub is done.** Say one line — "GitHub já
+está ligado nesta máquina ✓", with the account name when `gh` gave it — and go to
+step 3. Do **not** mention claude.ai/code, do not open anything, do not ask. Sending
+someone to re-do a connection they already made is the worst thing this skill can
+do: the page they land on no longer has the button you described.
 
-> Vamos conectar o **GitHub**.
-> 1. Abra https://claude.ai/code no navegador (mesma conta que você usa neste app).
-> 2. Clique em **Connect GitHub** e autorize o **Claude** (escolha sua conta; pode
->    marcar todos os repositórios).
-> 3. Quando a lista de repositórios aparecer, volte aqui e me diga "pronto".
+Otherwise, one route, chosen by what exists:
 
-**ASK #1b** — the only connection you cannot probe, header `GitHub`:
-> "Na página do claude.ai/code, seus repositórios apareceram na lista?"
-> `Sim, apareceram` · `Só aparece o botão de entrar` · `Deu erro`
+- **`gh` is installed** → run `gh auth login --web --git-protocol https` and tell
+  them: "Vai aparecer um código aqui e uma janela do navegador. Confirme o código
+  e entre na sua conta."
+- **`gh` is not installed** (the common case) → GitHub Desktop, the official app:
+  > 1. Baixe o **GitHub Desktop** em https://desktop.github.com e instale.
+  > 2. Abra o app, clique em **Sign in to GitHub.com** e entre na sua conta no
+  >    navegador.
+  > 3. Volte aqui e me diga "pronto".
 
-- Sim → `connected`. Then the second half, no question: if `gh` exists in Bash and
-  `gh auth status` fails, run `gh auth login --web --git-protocol https` and tell
-  them a browser window will ask them to confirm a code. If `gh` does not exist,
-  tell them once: "Para o Claude enviar arquivos desta máquina para o GitHub,
-  instale o **GitHub Desktop** (https://desktop.github.com) e entre na sua conta lá
-  — ele configura o acesso; nada para copiar." Record `"github_desktop": "pending"`
-  in config.json; do not wait for it.
-- Só o botão → they are not signed in to GitHub in that browser; sign in there and
-  repeat step 2. One retry, then `pending`.
-- Deu erro → paste what it said; organisations that block third-party apps are
-  the usual cause.
+Then run the step 0 probe again.
+
+- Prints → "GitHub ligado ✓".
+- Still nothing → do not loop. Say plainly: "Ficou pendente. Na primeira vez que o
+  Claude enviar um arquivo para o GitHub, vai abrir uma janela do navegador pedindo
+  o login — é normal, e depois disso fica guardado." Record `pending` and continue.
+
+**The cloud half is optional and is never a step here.** Only if the person asks to
+work on their repositories without depending on this computer, mention it once, and
+with the conditional that keeps it from being a dead end: "Abra claude.ai/code; **se
+aparecer** um botão **Connect GitHub**, autorize. Se já aparecer a lista dos seus
+repositórios, não há nada a fazer."
 
 ## 3. House rules and protections
 
@@ -237,9 +248,9 @@ file for `"<service>": "connected"`, nothing else.
 For each `connected` service, make **one read-only call** with its tools and show
 the answer in one line each — this is the moment the person sees it is real:
 
-- GitHub: `gh api user --jq .login` and `gh repo list --limit 3` when `gh` is
-  authenticated → "Sua conta X tem estes repositórios: …"; otherwise say the
-  repositories are the ones they saw on claude.ai/code and move on.
+- GitHub: `gh repo list --limit 3` when `gh` is authenticated → "Sua conta X tem
+  estes repositórios: …". With only a stored credential there is nothing free to
+  list; say the machine is ready to send files to GitHub and move on.
 - Supabase: the tool that lists projects (or organizations) → "Sua organização Y
   tem N projetos".
 - Vercel: the tool that lists projects → "Você tem N projetos na Vercel".
