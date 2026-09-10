@@ -1,9 +1,11 @@
-# alison-plugin — Claude Code (app) conectado ao GitHub, Supabase e Vercel
+# alison-plugin — as integrações nativas do app do Claude Code, para quem não programa
 
-Um plugin para o **app do Claude Code** (Mac ou Windows) que liga o Claude às suas contas do **GitHub** (onde o código mora),
-do **Supabase** (banco de dados) e da **Vercel** (onde o site fica no ar) — por
-login no navegador, sem copiar chave nenhuma e sem instalar mais nada. Feito para
-quem não programa.
+Um plugin para o **app do Claude Code** (Mac ou Windows) que **conduz** quem não
+programa a ligar as integrações que já existem no app — **Supabase** e **Vercel**
+pelos Conectores do claude.ai, **GitHub** pelo Claude GitHub App e pelo GitHub
+Desktop — e que protege para nada sensível ou desnecessário subir ao GitHub. O
+plugin não traz servidor nenhum: nada para copiar, nenhuma chave, só logins no
+navegador.
 
 ## Instalar (uma vez, dentro do app)
 
@@ -15,9 +17,8 @@ cada vez, na caixa de mensagem:
 /plugin install alison-plugin@alison
 ```
 
-Depois digite `/reload-plugins`. Se as conexões não aparecerem em `/mcp`, feche a
-conversa e abra uma nova — o app carrega as conexões e as proteções do plugin ao
-iniciar a sessão.
+Depois digite `/reload-plugins` e abra uma conversa nova — o app carrega as
+proteções do plugin ao iniciar a sessão.
 
 > **Windows:** instale antes o [Git para Windows](https://git-scm.com/download/win).
 > O próprio Claude Code precisa dele para executar comandos; sem ele, a guarda e a
@@ -29,9 +30,11 @@ Na primeira conversa depois disso, digite:
 /alison-plugin:comecar
 ```
 
-A skill conduz o resto: pergunta em quais serviços você já tem conta, conecta um
-por vez (você só faz login no navegador e clica em **Authorize**), confere sozinha
-se deu certo usando a conexão e termina mostrando algo real de cada conta. Leva
+A skill conduz o resto: pergunta em quais serviços você já tem conta, liga uma
+integração por vez (botão **+** → **Connectors** para Supabase e Vercel; **Connect
+GitHub** em claude.ai/code para o GitHub — você só faz login no navegador e clica em
+**Authorize**), confere sozinha se deu certo usando a conexão e termina mostrando
+algo real de cada conta. Leva
 uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
 `/alison-plugin:comecar` retoma só o que faltou.
 
@@ -55,14 +58,13 @@ Para voltar à versão da `main`: repita o passo 1 e instale com
 
 | componente | arquivo | para quê |
 |---|---|---|
-| conexão `github` | `.mcp.json` | servidor oficial do GitHub (`api.githubcopilot.com/mcp/`), login OAuth |
-| conexão `supabase` | `.mcp.json` | servidor oficial hospedado do Supabase (`mcp.supabase.com/mcp`), login OAuth |
-| conexão `vercel` | `.mcp.json` | servidor oficial da Vercel (`mcp.vercel.com`), login OAuth |
+| Conectores Supabase e Vercel | (do próprio app, nada no plugin) | ligados em **+ → Connectors**; aparecem como `claude.ai Supabase` / `claude.ai Vercel` |
+| GitHub | (do próprio app, nada no plugin) | Claude GitHub App em claude.ai/code para o que roda na nuvem; GitHub Desktop para enviar arquivos deste computador |
 | skill `comecar` | `skills/comecar/` | o onboarding guiado — a única skill do plugin |
 | `check-connections.sh` | `scripts/` | **não usado no app**: ferramenta de terminal mantida para quem mantém o plugin (lê `claude mcp list`); a skill confere as conexões **usando-as**, com uma consulta só de leitura |
 | hook `SessionStart` | `hooks/hooks.json` → `scripts/session-start.sh` | uma linha lembrando o que falta, enquanto faltar |
 | regras globais | `templates/CLAUDE.global.md` | instalado em `~/.claude/CLAUDE.md`: fala simples, confirma antes de mudar algo, nunca lida com chave |
-| guarda `github-guard` | `hooks/hooks.json` → `scripts/github-guard.sh` + `scripts/patterns/` | bloqueia chave/senha e pergunta antes de dado pessoal ir para o GitHub, por `git` ou pela conexão |
+| guarda `github-guard` | `hooks/hooks.json` → `scripts/github-guard.sh` + `scripts/patterns/` | bloqueia chave/senha e pergunta antes de dado pessoal ir para o GitHub, por `git` ou por qualquer ferramenta GitHub que o app venha a ter |
 | ignorados globais | `templates/gitignore.global` → `scripts/install-git-protections.sh` | `.env` e arquivos de chave fora de todo repositório da máquina |
 
 ## O que não sobe para o GitHub sem você ver
@@ -83,8 +85,13 @@ com formato inédito passa; a camada 3 e a 4 existem para isso.
 
 ## Perguntas comuns
 
-**Já conectei o GitHub / Supabase / Vercel pelos Conectores do claude.ai.** Então
-o Claude já usa essas conexões; a skill reconhece e não pede login de novo.
+**Já conectei o Supabase ou a Vercel pelos Conectores do claude.ai.** Então está
+feito; a skill reconhece e não pede login de novo.
+
+**Por que o GitHub é diferente?** Não existe conector de GitHub no diretório do
+Claude, e o servidor do GitHub exige colar um token — coisa que este plugin nunca
+pede. Por isso o caminho é o oficial do Claude (**Connect GitHub** em claude.ai/code)
+e, para enviar arquivos deste computador, o app **GitHub Desktop**.
 
 **Onde ficam minhas senhas?** Em lugar nenhum daqui. O login acontece no site de
 cada serviço, no seu navegador; o Claude Code guarda só uma autorização que você

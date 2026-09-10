@@ -16,8 +16,8 @@ Na branch `feat/desktop-only`:
 - A skill perde o "atalho opcional" `check-connections.sh`. O arquivo **fica** no
   repo, com cabeçalho dizendo que é ferramenta de terminal para manutenção — nada
   é apagado.
-- Hooks, guarda, `.gitignore` global e sondagem por tool não mudam: já eram
-  compatíveis com o app (AD-005).
+- Hooks, guarda e `.gitignore` global não mudam. O `.mcp.json` **saiu** nesta
+  branch no mesmo dia — ver AD-007: o plugin deixou de trazer servidores.
 
 ## Consequências
 - Instalação a partir da branch: `/plugin marketplace add` com a referência da
