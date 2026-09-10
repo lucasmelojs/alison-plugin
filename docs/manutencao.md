@@ -18,6 +18,11 @@ Fora do README de propósito: quem instala não programa.
 
 ## O que não foi testado pelo Lucas (2026-09-10)
 
+- **O fluxo inteiro da skill no app, ponta a ponta.** Testado em pedaços: o passo
+  do GitHub e o dos conectores foram corrigidos a partir de relatos de campo
+  (AD-008, AD-009), mas ninguém rodou `/alison-plugin:comecar` do início ao fim
+  numa conta nova depois disso.
+
 - **Windows / app desktop.** Os hooks chamam `bash "${CLAUDE_PLUGIN_ROOT}/…"`
   para rodar no Git Bash; a expansão de `${CLAUDE_PLUGIN_ROOT}` com barras
   invertidas dentro de aspas em bash MSYS não foi verificada numa máquina Windows.

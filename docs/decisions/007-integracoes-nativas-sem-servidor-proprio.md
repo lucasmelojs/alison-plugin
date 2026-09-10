@@ -1,6 +1,6 @@
 # 007 — O plugin não traz servidor: conduz às integrações nativas do app
 
-**Status:** em teste (branch `feat/desktop-only`) · **Data:** 2026-09-10
+**Status:** aceito · **Data:** 2026-09-10
 **A parte de GitHub foi substituída pelo AD-009** (credencial local primeiro; nuvem opcional).
 
 ## Contexto
@@ -39,8 +39,7 @@ já tem:
 - Zero configuração de servidor no plugin: o que ele entrega é condução, regras e
   proteção. Se o Claude ganhar um conector de GitHub, a skill passa a sondá-lo
   sem mudar o resto.
-- A `main` (v0.2.0) ainda traz o `.mcp.json` com o GitHub que não loga; se esta
-  branch for aprovada, o merge corrige a `main`; se não, a `main` precisa ao
-  menos tirar o servidor `github`.
+- A `main` até a v0.2.0 trazia o `.mcp.json` com o GitHub que não loga; o merge
+  desta decisão (v0.3.0) removeu o arquivo.
 - Dependência de plano: Conectores e claude.ai/code exigem conta claude.ai
   (Pro/Max/Team/Enterprise) — o público do plugin já está no app, logo já tem.

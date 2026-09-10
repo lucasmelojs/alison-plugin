@@ -1,7 +1,7 @@
 {
   "name": "alison-plugin",
   "displayName": "Claude + GitHub + Supabase + Vercel",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Para o app do Claude Code: conduz quem não programa a ligar as integrações nativas — Conectores do claude.ai para Supabase e Vercel, Claude GitHub App e GitHub Desktop para o GitHub — e protege para nada sensível ou desnecessário subir ao GitHub. Nenhuma chave para copiar.",
   "author": {
     "name": "Lucas Melo",

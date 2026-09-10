@@ -1,6 +1,6 @@
 # 008 — O login do conector começa na sessão, não no claude.ai
 
-**Status:** em teste (branch `feat/desktop-only`) · **Data:** 2026-09-10
+**Status:** aceito · **Data:** 2026-09-10
 
 ## Contexto
 Rodando a skill no app, ela mandou o testador para "claude.ai → Configurações →

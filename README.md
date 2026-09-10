@@ -38,22 +38,6 @@ algo real de cada conta. Leva
 uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
 `/alison-plugin:comecar` retoma só o que faltou.
 
-## Testar esta versão (branch `feat/desktop-only`)
-
-Esta branch existe para teste; a versão publicada continua na `main`. Dentro do
-app, na caixa de mensagem:
-
-1. Se já instalou a versão da `main`, tire-a antes — o marketplace tem o mesmo
-   nome (`alison`) nas duas e o app recusa dois com o mesmo nome:
-   `/plugin uninstall alison-plugin@alison` e depois `/plugin marketplace remove alison`.
-2. `/plugin marketplace add https://github.com/lucasmelojs/alison-plugin.git#feat/desktop-only`
-3. `/plugin install alison-plugin@alison`
-4. `/reload-plugins`, depois feche a conversa e abra uma nova.
-5. `/alison-plugin:comecar`
-
-Para voltar à versão da `main`: repita o passo 1 e instale com
-`/plugin marketplace add lucasmelojs/alison-plugin`.
-
 ## O que vem dentro
 
 | componente | arquivo | para quê |

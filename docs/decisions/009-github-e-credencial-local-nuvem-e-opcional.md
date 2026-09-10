@@ -1,6 +1,6 @@
 # 009 — GitHub é a credencial desta máquina; a parte na nuvem é opcional
 
-**Status:** em teste (branch `feat/desktop-only`) · **Data:** 2026-09-10
+**Status:** aceito · **Data:** 2026-09-10
 **Substitui** a parte de GitHub do AD-007.
 
 ## Contexto
