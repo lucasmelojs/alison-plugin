@@ -1,6 +1,10 @@
 # 005 — Tem que funcionar no app desktop, onde não há `claude` no PATH
 
-**Status:** aceito · **Data:** 2026-09-10
+**Status:** aceito, parcialmente substituído · **Data:** 2026-09-10
+O terminal deixou de ser alternativa (AD-006), os servidores próprios saíram
+(AD-007) e a detecção passou a ler os nomes das tools (AD-008). O que continua
+valendo aqui: nada de `python3` no caminho crítico, hooks chamados via `bash`,
+Git for Windows como pré-requisito.
 
 ## Contexto
 O primeiro teste real foi no app desktop do Claude Code, em Windows. Relato do

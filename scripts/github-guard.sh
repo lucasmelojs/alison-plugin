@@ -134,7 +134,7 @@ case "$tool" in
     printf '%s' "$cmd" | grep -Eq 'git[^|;&]*[[:space:]](commit|push)([[:space:]]|$)' || exit 0
     scan_git "$cmd" "$(json_field cwd)"
     ;;
-  mcp__*github__*)
+  mcp__*[Gg]it[Hh]ub*__*)   # any GitHub MCP tool: a future claude.ai connector or a user-added server
     scan_mcp
     ;;
   *) exit 0 ;;

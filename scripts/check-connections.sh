@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # alison-plugin — reports the auth state of the three bundled MCP servers.
+# TERMINAL-ONLY maintainer tool. Not referenced by the skill on the desktop-only
+# branch (AD-006): the app has no `claude` on PATH, so the skill probes tools.
 # Output, one per line, stable for the skill to parse:
 #   github=connected | needs_auth | failed | missing
 # Reads `claude mcp list` (health-checked, uses the credentials stored by /mcp).
