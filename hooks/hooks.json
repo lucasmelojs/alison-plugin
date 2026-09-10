@@ -23,7 +23,7 @@
         ]
       },
       {
-        "matcher": "mcp__plugin_alison[-_]plugin_github__.*",
+        "matcher": "mcp__.*[Gg]it[Hh]ub.*__.*",
         "hooks": [
           {
             "type": "command",
