@@ -1,14 +1,14 @@
-# alison-plugin — Claude Code conectado ao GitHub, Supabase e Vercel
+# alison-plugin — Claude Code (app) conectado ao GitHub, Supabase e Vercel
 
-Um plugin que liga o Claude Code às suas contas do **GitHub** (onde o código mora),
+Um plugin para o **app do Claude Code** (Mac ou Windows) que liga o Claude às suas contas do **GitHub** (onde o código mora),
 do **Supabase** (banco de dados) e da **Vercel** (onde o site fica no ar) — por
 login no navegador, sem copiar chave nenhuma e sem instalar mais nada. Feito para
 quem não programa.
 
-## Instalar (uma vez, dentro do próprio Claude Code)
+## Instalar (uma vez, dentro do app)
 
-Serve para o **app do Claude Code** (Mac ou Windows) e para o terminal. Abra uma
-conversa e digite estas duas linhas, uma de cada vez, na caixa de mensagem:
+Abra o app do Claude Code, comece uma conversa e digite estas duas linhas, uma de
+cada vez, na caixa de mensagem:
 
 ```
 /plugin marketplace add lucasmelojs/alison-plugin
@@ -35,9 +35,6 @@ se deu certo usando a conexão e termina mostrando algo real de cada conta. Leva
 uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
 `/alison-plugin:comecar` retoma só o que faltou.
 
-Quem prefere o terminal: `claude plugin marketplace add lucasmelojs/alison-plugin`
-e `claude plugin install alison-plugin@alison` fazem o mesmo.
-
 ## O que vem dentro
 
 | componente | arquivo | para quê |
@@ -46,7 +43,7 @@ e `claude plugin install alison-plugin@alison` fazem o mesmo.
 | conexão `supabase` | `.mcp.json` | servidor oficial hospedado do Supabase (`mcp.supabase.com/mcp`), login OAuth |
 | conexão `vercel` | `.mcp.json` | servidor oficial da Vercel (`mcp.vercel.com`), login OAuth |
 | skill `comecar` | `skills/comecar/` | o onboarding guiado — a única skill do plugin |
-| `check-connections.sh` | `scripts/` | atalho opcional: lê `claude mcp list` quando o comando existe; a skill confere as conexões **usando-as** (uma consulta só de leitura), então funciona no app mesmo sem o comando |
+| `check-connections.sh` | `scripts/` | **não usado no app**: ferramenta de terminal mantida para quem mantém o plugin (lê `claude mcp list`); a skill confere as conexões **usando-as**, com uma consulta só de leitura |
 | hook `SessionStart` | `hooks/hooks.json` → `scripts/session-start.sh` | uma linha lembrando o que falta, enquanto faltar |
 | regras globais | `templates/CLAUDE.global.md` | instalado em `~/.claude/CLAUDE.md`: fala simples, confirma antes de mudar algo, nunca lida com chave |
 | guarda `github-guard` | `hooks/hooks.json` → `scripts/github-guard.sh` + `scripts/patterns/` | bloqueia chave/senha e pergunta antes de dado pessoal ir para o GitHub, por `git` ou pela conexão |

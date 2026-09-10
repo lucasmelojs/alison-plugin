@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection by using it (one read-only call) instead of asking — works in the desktop app, where the claude CLI is not on PATH. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection by using it (one read-only call) instead of asking. Built for the Claude Code desktop app only: no terminal, no claude CLI. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -19,9 +19,9 @@ default behaviour while this skill runs:
 - **Never ask for, accept or store a password or key.** The connection is a browser
   login. If the user pastes a key, tell them kindly not to, and do not repeat it.
 - **Never run `/mcp` yourself** — you cannot; the user types it. Give the exact
-  keystrokes. They work the same in the terminal and in the desktop app.
-- **Verify by using, not by CLI.** A connection is proven when one of its tools
-  answers a read-only call. `claude mcp list` is a bonus when available.
+  keystrokes, as typed in the app's message box.
+- **Verify by using.** A connection is proven when one of its tools answers a
+  read-only call. There is no CLI in this surface; do not look for one.
 
 Names as they appear in this session: `plugin:alison-plugin:github`,
 `plugin:alison-plugin:supabase`, `plugin:alison-plugin:vercel`.
@@ -32,9 +32,9 @@ Order on a **first run** (no `config.json`): send the welcome of step 1 *before*
 the first probe — a probe can pop the permission box, and the person must have
 read that answering **Yes** is expected. On later runs, probe straight away.
 
-The person may be in the **desktop app** (Mac or Windows), where the `claude`
-command is often not on the shell's PATH. So the source of truth is not a CLI: it
-is whether each service's tools **answer**. Probe each one with a read-only call:
+The person is in the **Claude Code desktop app** (Mac or Windows). The source of
+truth is whether each service's tools **answer**. Probe each one with a read-only
+call:
 
 | service | probe (use whichever of these tools exists in the session) | result |
 |---|---|---|
@@ -48,15 +48,6 @@ is whether each service's tools **answer**. Probe each one with a read-only call
   also count as `connected` — the person already logged in through claude.ai;
   do not make them log in twice.
 - Any other error → `failed`; keep the message for ASK #2.
-
-Optional accelerator, only when it works:
-
-```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh"   # github=… supabase=… vercel=…
-```
-
-If it prints `error=claude CLI not on PATH` or every line says `missing`, ignore it
-silently and trust the probes — never tell the person to "restart" because of it.
 
 Also read `~/.claude/alison/config.json` (`%USERPROFILE%\.claude\alison\config.json`
 on Windows) if it exists, and note whether `~/.claude/CLAUDE.md` exists.
