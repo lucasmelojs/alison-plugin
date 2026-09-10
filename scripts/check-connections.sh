@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# apresentacao-plugin — reports the auth state of the three bundled MCP servers.
+# alison-plugin — reports the auth state of the three bundled MCP servers.
 # Output, one per line, stable for the skill to parse:
 #   github=connected | needs_auth | failed | missing
 # Reads `claude mcp list` (health-checked, uses the credentials stored by /mcp).
@@ -7,7 +7,7 @@
 # `claude mcp list` health check itself.
 set -uo pipefail
 
-PLUGIN_NAME="${PLUGIN_NAME:-apresentacao-plugin}"
+PLUGIN_NAME="${PLUGIN_NAME:-alison-plugin}"
 # SERVERS is overridable only so the parser can be tested against another
 # installed plugin (e.g. PLUGIN_NAME=stripe SERVERS="stripe").
 read -r -a SERVERS <<< "${SERVERS:-github supabase vercel}"

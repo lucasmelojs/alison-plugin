@@ -80,7 +80,7 @@ head -c 12000000 /dev/zero | tr '\0' 'a' > video.bin; git add video.bin
 payload_bash 'git commit -m big' | run "R 12 MB file asks" ask
 git rm -q --cached video.bin; rm video.bin
 
-mcp() { printf '{"session_id":"s","hook_event_name":"PreToolUse","cwd":"%s","tool_name":"mcp__plugin_apresentacao-plugin_github__%s","tool_input":%s}' "$R" "$1" "$2"; }
+mcp() { printf '{"session_id":"s","hook_event_name":"PreToolUse","cwd":"%s","tool_name":"mcp__plugin_alison-plugin_github__%s","tool_input":%s}' "$R" "$1" "$2"; }
 mcp push_files '{"owner":"o","repo":"r","branch":"main","files":[{"path":"src/a.ts","content":"const t = \"ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\"\n"}],"message":"m"}' | run "G MCP push_files with ghp_ token blocks" block
 mcp create_or_update_file '{"owner":"o","repo":"r","path":".env","content":"A=1","message":"m","branch":"main"}' | run "H MCP writing .env blocks by name" block
 mcp create_or_update_file '{"owner":"o","repo":"r","path":"dados/lista.xlsx","content":"UEsDBBQ=","message":"m","branch":"main"}' | run "I MCP writing .xlsx asks" ask

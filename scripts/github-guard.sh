@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# apresentacao-plugin PreToolUse guard — nothing sensitive reaches GitHub unnoticed.
+# alison-plugin PreToolUse guard — nothing sensitive reaches GitHub unnoticed.
 #
 # Reads the hook JSON on stdin (tool_name, tool_input, cwd). Three outcomes:
 #   silence            nothing found                      exit 0

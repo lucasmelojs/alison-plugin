@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# apresentacao-plugin — installs the machine-wide git ignore list (layer 1).
+# alison-plugin — installs the machine-wide git ignore list (layer 1).
 # Idempotent: creates ~/.config/git/ignore or appends missing lines to whatever
 # core.excludesFile the person already has. Prints one status line for the skill.
 # Skips (exit 0) when git is not really installed — on macOS the /usr/bin/git stub
@@ -31,7 +31,7 @@ fi
 
 added=0
 {
-  echo; echo "# --- added by apresentacao-plugin ($(date +%F)) ---"
+  echo; echo "# --- added by alison-plugin ($(date +%F)) ---"
 } > "$target.tmp.$$"
 while IFS= read -r line; do
   case "$line" in ''|'#'*) continue ;; esac

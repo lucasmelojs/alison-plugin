@@ -1,6 +1,6 @@
-# apresentacao-plugin — global ignore list (git config core.excludesFile).
+# alison-plugin — global ignore list (git config core.excludesFile).
 # Files matching these names never enter ANY repository on this machine,
-# even with `git add .`. Installed by /apresentacao-plugin:comecar.
+# even with `git add .`. Installed by /alison-plugin:comecar.
 # Two families: what must not leak (secrets) and what nobody needs (generated).
 
 # --- Secrets — every spelling. The documented templates stay visible.

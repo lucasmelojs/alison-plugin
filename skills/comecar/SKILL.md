@@ -1,6 +1,6 @@
 ---
 name: comecar
-description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection with a script instead of asking. Use when the SessionStart hook says the connections are not configured, on the first session after installing apresentacao-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
+description: Guided, plain-language onboarding that connects Claude Code to GitHub, Supabase and Vercel through browser login (OAuth) and verifies each connection with a script instead of asking. Use when the SessionStart hook says the connections are not configured, on the first session after installing alison-plugin, or when the user says "começar", "conectar", "configurar", "ligar o GitHub / Supabase / Vercel", "não está conectado", "o que eu consigo fazer aqui". Idempotent — re-run any time; it only touches what is still pending.
 allowed-tools: Bash, Read, Write, AskUserQuestion
 ---
 
@@ -21,20 +21,20 @@ default behaviour while this skill runs:
 - **Never run `/mcp` yourself** — you cannot; the user types it. Give the exact
   keystrokes.
 
-Names as they appear in this session: `plugin:apresentacao-plugin:github`,
-`plugin:apresentacao-plugin:supabase`, `plugin:apresentacao-plugin:vercel`.
+Names as they appear in this session: `plugin:alison-plugin:github`,
+`plugin:alison-plugin:supabase`, `plugin:alison-plugin:vercel`.
 
 ## 0. Ground truth, silently
 
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh"      # github=… supabase=… vercel=…
-cat ~/.claude/apresentacao/config.json 2>/dev/null          # previous run, if any
+cat ~/.claude/alison/config.json 2>/dev/null          # previous run, if any
 [ -f ~/.claude/CLAUDE.md ] && echo "global CLAUDE.md exists"
 ```
 
 - All three `connected` → jump to **step 5**. Nothing to ask.
 - `error=claude CLI not on PATH` → tell the user to close and reopen Claude Code,
-  then run `/apresentacao-plugin:comecar` again. Stop.
+  then run `/alison-plugin:comecar` again. Stop.
 - Anything `missing` → the plugin is not fully loaded; ask the user to restart
   Claude Code (`/exit`, then `claude`). Stop.
 
@@ -65,7 +65,7 @@ Skip any service already `connected`. For the current one, send **exactly** this
 
 > Vamos conectar o **GitHub**.
 > 1. Digite `/mcp` e aperte Enter.
-> 2. Na lista, use as setas até `plugin:apresentacao-plugin:github` e aperte Enter.
+> 2. Na lista, use as setas até `plugin:alison-plugin:github` e aperte Enter.
 > 3. Escolha **Authenticate**. O navegador vai abrir.
 > 4. Entre na sua conta e clique em **Authorize**.
 > 5. Volte para esta janela e me diga "pronto".
@@ -113,7 +113,7 @@ handle keys — safe for anyone.
   > `Manter o meu e adicionar as regras do plugin no final` (Recommended) ·
   > `Substituir pelo do plugin` · `Deixar como está`
 
-  When appending, separate with `\n\n<!-- apresentacao-plugin: regras abaixo -->\n\n`.
+  When appending, separate with `\n\n<!-- alison-plugin: regras abaixo -->\n\n`.
 
 ### 3b. Machine-wide git ignore list (no question)
 
@@ -132,10 +132,10 @@ needs nothing installed: the plugin already checks everything that goes to GitHu
 ## 4. Record (so the hook stops nudging)
 
 ```bash
-mkdir -p ~/.claude/apresentacao
+mkdir -p ~/.claude/alison
 "${CLAUDE_PLUGIN_ROOT}/scripts/check-connections.sh" | python3 -c '
 import json, pathlib, datetime, sys
-root = pathlib.Path.home() / ".claude/apresentacao/config.json"
+root = pathlib.Path.home() / ".claude/alison/config.json"
 conn = dict(l.strip().split("=", 1) for l in sys.stdin if "=" in l and not l.startswith("error="))
 cfg = json.loads(root.read_text()) if root.exists() else {}
 cfg.update({"connections": conn, "setup_version": 1,
@@ -162,7 +162,7 @@ Never create, change or delete anything in this step. If a call fails, say so in
 one plain line and move on — the connection status from step 2 still stands.
 
 Close with at most nine lines: what is connected, what is pending (and that
-`/apresentacao-plugin:comecar` finishes it later), what happened to the rules
+`/alison-plugin:comecar` finishes it later), what happened to the rules
 file, one line on the protections ("nada de chave ou senha sobe para o GitHub sem
 você ver — e se for planilha ou lista de pessoas, ele pergunta antes"), and three
 things to try now, one per service, e.g.:
