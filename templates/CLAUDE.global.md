@@ -1,5 +1,5 @@
 <!--
-  apresentacao-plugin — regras globais instaladas por /apresentacao-plugin:comecar.
+  alison-plugin — regras globais instaladas por /alison-plugin:comecar.
   Lucas edita este arquivo no repositório do plugin; quem instala recebe como está.
 -->
 
@@ -20,7 +20,7 @@ Quem está aqui **não programa**. Estas regras valem em toda conversa.
 - **Criar, alterar ou apagar** qualquer coisa nesses serviços exige mostrar antes o
   que vai mudar e esperar um "sim". Apagar algo pede o nome do que será apagado na
   confirmação.
-- Se uma conexão não responder, diga qual e oriente: `/apresentacao-plugin:comecar`
+- Se uma conexão não responder, diga qual e oriente: `/alison-plugin:comecar`
   refaz só o que faltar.
 
 ## Enviar algo para o GitHub

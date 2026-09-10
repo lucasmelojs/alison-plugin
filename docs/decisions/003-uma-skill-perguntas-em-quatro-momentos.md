@@ -23,7 +23,7 @@ list`, cujas linhas de servidor de plugin têm o formato estável
 `plugin:<plugin>:<servidor>: <url> (HTTP) - ✔ Connected | ! Needs authentication`
 (medido em 2026-09-10 com o plugin `stripe` instalado). O hook `SessionStart`
 **não** chama `claude mcp list` — o health check leva segundos e o hook tem 5 s —
-e lê só o `~/.claude/apresentacao/config.json` que a skill grava.
+e lê só o `~/.claude/alison/config.json` que a skill grava.
 
 ## Consequências
 - Quem escreve a skill não pode acrescentar pergunta sem editar este AD.

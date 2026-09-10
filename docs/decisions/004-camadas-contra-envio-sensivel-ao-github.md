@@ -19,7 +19,7 @@ Quatro camadas, cada uma cobrindo a falha da anterior:
    `.next/`, `dist/`, `build/`, `out/`, `coverage/`, caches, logs, `.DS_Store`.
    Pedido do Lucas em 2026-09-10: o desnecessário também não sobe.
 2. **Hook `PreToolUse` `github-guard.sh`** em dois matchers: `Bash` (só age se o
-   comando tem `git … commit|push`) e `mcp__plugin_apresentacao[-_]plugin_github__.*`
+   comando tem `git … commit|push`) e `mcp__plugin_alison[-_]plugin_github__.*`
    (toda escrita pela conexão). Dois níveis: **BLOCK** (`exit 2`, motivo em stderr)
    para segredo — chave privada, tokens GitHub/Stripe/Anthropic/OpenAI/Slack/Google,
    `sb_secret_`, `SERVICE_ROLE_KEY`, URL de banco com senha, `*.env`, `*.pem` —

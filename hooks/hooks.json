@@ -23,7 +23,7 @@
         ]
       },
       {
-        "matcher": "mcp__plugin_apresentacao[-_]plugin_github__.*",
+        "matcher": "mcp__plugin_alison[-_]plugin_github__.*",
         "hooks": [
           {
             "type": "command",

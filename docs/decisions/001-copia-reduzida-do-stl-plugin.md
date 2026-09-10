@@ -1,6 +1,6 @@
 # 001 — Cópia do stl-plugin reduzida a três conexões e uma skill
 
-**Status:** aceito · **Data:** 2026-09-10
+**Status:** aceito · **Data:** 2026-09-10 · **Renomeado** de `apresentacao-plugin` para `alison-plugin` em 2026-09-10 (repo, marketplace `alison`, pasta e todos os identificadores)
 
 ## Contexto
 Lucas pediu uma cópia do `stl-plugin` adaptada para pessoas não-técnicas, com as
@@ -11,8 +11,8 @@ handoff, design system), templates de repo e o MCP `firecrawl`, que exige API ke
 na instalação.
 
 ## Decisão
-Repo próprio em `~/Projetos/apresentacao-plugin`, marketplace `apresentacao` e
-plugin `apresentacao-plugin` no mesmo repo (mesmo desenho do AD-001 do
+Repo próprio em `~/Projetos/alison-plugin`, marketplace `alison` e
+plugin `alison-plugin` no mesmo repo (mesmo desenho do AD-001 do
 `stl-plugin`). Nome de marketplace diferente de `stlflix` para os dois poderem
 coexistir na máquina do Lucas. Ficam: os três MCPs HTTP com OAuth, a skill
 `comecar`, o hook `SessionStart` e um `CLAUDE.md` global em linguagem simples.
