@@ -1,4 +1,4 @@
-# apresentacao-plugin — Claude Code conectado ao GitHub, Supabase e Vercel
+# alison-plugin — Claude Code conectado ao GitHub, Supabase e Vercel
 
 Um plugin que liga o Claude Code às suas contas do **GitHub** (onde o código mora),
 do **Supabase** (banco de dados) e da **Vercel** (onde o site fica no ar) — por
@@ -11,21 +11,21 @@ Antes: ter o [Claude Code](https://docs.anthropic.com/pt/docs/claude-code/overvi
 instalado. No app ou no terminal onde o Claude Code roda:
 
 ```bash
-claude plugin marketplace add lucasmelojs/apresentacao-plugin
-claude plugin install apresentacao-plugin@apresentacao
+claude plugin marketplace add lucasmelojs/alison-plugin
+claude plugin install alison-plugin@alison
 claude
 ```
 
 Na primeira conversa, digite:
 
 ```
-/apresentacao-plugin:comecar
+/alison-plugin:comecar
 ```
 
 A skill conduz o resto: pergunta em quais serviços você já tem conta, conecta um
 por vez (você só faz login no navegador e clica em **Authorize**), confere sozinha
 se deu certo e termina mostrando algo real de cada conta. Leva uns cinco minutos.
-Se parar no meio, o Claude lembra na próxima conversa e `/apresentacao-plugin:comecar`
+Se parar no meio, o Claude lembra na próxima conversa e `/alison-plugin:comecar`
 retoma só o que faltou.
 
 ## O que vem dentro
@@ -76,20 +76,3 @@ exclusão. Consultas e listagens ele faz direto.
 **Uso Supabase instalado no meu próprio servidor.** Este plugin fala com o Supabase
 na nuvem (supabase.com). Para instalação própria, a Supabase não oferece login por
 navegador — veja `docs/decisions/002-supabase-oficial-hospedado-com-oauth.md`.
-
-## Manter (Lucas)
-
-- Este repo é o marketplace (`apresentacao`) e o plugin (`apresentacao-plugin`) ao
-  mesmo tempo; id de instalação `apresentacao-plugin@apresentacao`.
-- Mudou algo: sobe `version` em `.claude-plugin/plugin.json`, `claude plugin
-  validate .`, push; quem instalou roda `claude plugin update apresentacao-plugin`.
-- Teste local sem instalar: `claude --plugin-dir ~/Projetos/apresentacao-plugin`
-  (as conexões aparecem em `/mcp`; `claude mcp list` só enxerga plugin instalado,
-  então o `check-connections.sh` reporta `missing` nesse modo).
-- Teste da guarda e do `.gitignore` global, em repo e HOME descartáveis (23 casos,
-  ~5 s): `scripts/test-github-guard.sh`. Novo padrão em `scripts/patterns/` pede
-  um caso novo ali.
-- Teste do parser sem instalar, contra qualquer plugin já instalado:
-  `PLUGIN_NAME=stripe SERVERS=stripe scripts/check-connections.sh`.
-- É uma cópia reduzida do `stl-plugin` (`docs/decisions/001-...`); o que foi
-  removido e por quê está lá. Decisões em `docs/decisions/` — `ls` é o índice.
