@@ -32,7 +32,8 @@ Na primeira conversa depois disso, digite:
 
 A skill conduz o resto: pergunta em quais serviços você já tem conta, liga uma
 integração por vez sem você sair do app (para Supabase e Vercel ele mesmo abre o
-pedido de login e te dá o link; para o GitHub, **Connect GitHub** em claude.ai/code), confere sozinha se deu certo usando a conexão e termina mostrando
+pedido de login e te dá o link; para o GitHub ele confere a credencial da máquina e
+só pede o **GitHub Desktop** se faltar), confere sozinha se deu certo usando a conexão e termina mostrando
 algo real de cada conta. Leva
 uns cinco minutos. Se parar no meio, o Claude lembra na próxima conversa e
 `/alison-plugin:comecar` retoma só o que faltou.
@@ -58,7 +59,7 @@ Para voltar à versão da `main`: repita o passo 1 e instale com
 | componente | arquivo | para quê |
 |---|---|---|
 | Conectores Supabase e Vercel | (do próprio app, nada no plugin) | o Claude inicia o login na própria conversa e te dá o link; aparecem como `claude.ai Supabase` / `claude.ai Vercel` |
-| GitHub | (do próprio app, nada no plugin) | Claude GitHub App em claude.ai/code para o que roda na nuvem; GitHub Desktop para enviar arquivos deste computador |
+| GitHub | (do próprio app, nada no plugin) | a credencial desta máquina: **GitHub Desktop** (ou `gh`). O Claude confere sozinho e só pede login se faltar |
 | skill `comecar` | `skills/comecar/` | o onboarding guiado — a única skill do plugin |
 | `check-connections.sh` | `scripts/` | **não usado no app**: ferramenta de terminal mantida para quem mantém o plugin (lê `claude mcp list`); a skill confere as conexões **usando-as**, com uma consulta só de leitura |
 | hook `SessionStart` | `hooks/hooks.json` → `scripts/session-start.sh` | uma linha lembrando o que falta, enquanto faltar |
@@ -89,8 +90,12 @@ feito; a skill reconhece e não pede login de novo.
 
 **Por que o GitHub é diferente?** Não existe conector de GitHub no diretório do
 Claude, e o servidor do GitHub exige colar um token — coisa que este plugin nunca
-pede. Por isso o caminho é o oficial do Claude (**Connect GitHub** em claude.ai/code)
-e, para enviar arquivos deste computador, o app **GitHub Desktop**.
+pede. O que vale para quem trabalha em pastas do próprio computador é a credencial
+da máquina: o app **GitHub Desktop** faz o login e configura tudo. O Claude confere
+se já existe e, se existir, não pede nada.
+
+**Já conectei o GitHub e ele pede de novo?** Não deve mais: a skill mede a
+credencial antes de falar. Se acontecer, é bug — abra uma issue com o que apareceu.
 
 **Onde ficam minhas senhas?** Em lugar nenhum daqui. O login acontece no site de
 cada serviço, no seu navegador; o Claude Code guarda só uma autorização que você

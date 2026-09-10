@@ -1,6 +1,7 @@
 # 007 — O plugin não traz servidor: conduz às integrações nativas do app
 
 **Status:** em teste (branch `feat/desktop-only`) · **Data:** 2026-09-10
+**A parte de GitHub foi substituída pelo AD-009** (credencial local primeiro; nuvem opcional).
 
 ## Contexto
 No primeiro teste do login, o app devolveu *"Não foi possível iniciar o login para
