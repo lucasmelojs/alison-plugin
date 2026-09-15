@@ -1,1 +1,1 @@
-\.env\.(example|template|sample)$
+\.env[^/]*\.(example|template|sample)$

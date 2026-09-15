@@ -87,6 +87,9 @@ mcp create_or_update_file '{"owner":"o","repo":"r","path":"dados/lista.xlsx","co
 mcp create_or_update_file '{"owner":"o","repo":"r","path":"docs/a.md","content":"api_key = \"abcd1234efgh5678ijkl\"","message":"m","branch":"main"}' | run "J MCP escaped-quote api_key blocks" block
 mcp list_repositories '{"owner":"o"}' | run "N MCP read-only tool is silent" silent
 mcp create_or_update_file '{"owner":"o","repo":"r","path":".env.example","content":"API_KEY=\n","message":"m","branch":"main"}' | run "O .env.example is allowed" silent
+mcp create_or_update_file '{"owner":"o","repo":"r","path":".env.xtts.example","content":"HOST=user@vps.example.com\n","message":"m","branch":"main"}' | run "O2 .env.<flavour>.example is allowed" silent
+mcp create_or_update_file '{"owner":"o","repo":"r","path":".env.xtts.example","content":"TOKEN=ghp_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n","message":"m","branch":"main"}' | run "O3 a real key inside a template still blocks" block
+mcp create_or_update_file '{"owner":"o","repo":"r","path":".env.production","content":"A=1","message":"m","branch":"main"}' | run "O4 .env.production is not a template" block
 
 # install-git-protections: create, then merge (0 added), then merge into a custom file
 INST="$HERE/install-git-protections.sh"
